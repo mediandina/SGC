@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Gestión de Cupos</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+</head>
+<body>
+
+<a class="skip-link sr-only" href="#calendar">Saltar al calendario</a>
+<header class="header hero" role="banner">
+
+    <!-- Botón salir — esquina superior derecha del header -->
+    <a href="{{ url_for('logout') }}" class="btn-salir" aria-label="Cerrar sesión">
+        Salir
+    </a>
+
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Descargue Andina" class="logo">
+    <h1>
+        <span class="primary">Agendar</span>
+        <span class="secondary">Cupo</span>
+    </h1>
+    <p class="hero-subtitle">Elija la fecha en el calendario y seleccione un cupo disponible.</p>
+    <a href="#calendar" class="cta-button" role="button">Agendar ahora</a>
+
+</header>
+
+<div id="mensaje-exito" class="mensaje-exito" style="display:none;" role="status" aria-live="polite">
+    Cupo registrado con éxito
+</div>
+
+<main class="contenedor" role="main">
+
+    <!-- REGLAS Y INSTRUCCIONES -->
+    <div class="card reglas">
+        <h2>Reglas importantes</h2>
+        <ul>
+            <li>Todos los datos solicitados deben ser diligenciados correctamente.</li>
+            <li>El día del cupo asignado, el personal de Descargue Andina se comunicará telefónicamente con el conductor para indicarle que puede acercarse al área de descarga.</li>
+            <li>En caso de no poder asistir el día programado para el descargue, comuníquese con el área de despacho con la debida anticipación.</li>
+            <li>Para el ingreso, es obligatorio contar con el ticket de báscula (autorizada) correspondiente al peso inicial debidamente autorizado.</li>
+            <li>Por favor comprobar que los datos registrados en su registro sean iguales a los datos solicitados en el formulario </li>
+        </ul>
+    </div>
+
+    <!-- CALENDARIO -->
+    <div class="card">
+        <div id="calendar"></div>
+        <h3 id="titulo"></h3>
+        <div id="cupos"></div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="card" id="formulario">
+        <div class="info">
+            <p><strong>Fecha:</strong> <span id="fecha_txt"></span></p>
+            <p><strong>Cupo:</strong> <span id="cupo_txt"></span></p>
+        </div>
+
+        <form method="POST" action="/guardar" id="formCupo" role="form" aria-label="Formulario de agendamiento">
+
+            <input type="hidden" name="fecha" id="fecha">
+            <input type="hidden" name="cupo" id="cupo">
+
+            <div class="dmforminput required">
+                <label for="nombre">Nombre del conductor</label>
+                <input type="text" 
+                name="nombre" 
+                id="nombre" 
+                maxlength="30"
+                placeholder="Ej: Fernando Hernádez"
+                required aria-required="true" aria-describedby="hint-nombre error-nombre">
+            <small id="hint-nombre" class="input-hint">Escriba su nombre y apellido</small>
+            <small class="error-message" id="error-nombre"></small>
+            </div>
+
+            <div class="dmforminput required">
+                <label for="tipo">Tipo de vehículo</label>
+                <select name="tipo" id="tipo" required>
+                    <option value="" disabled selected hidden>Seleccione una opción</option>
+                    <option value="Mula">Mula</option>
+                    <option value="Planchón">Planchón</option>
+                    <option value="Sencillo">Sencillo</option>
+                </select>
+            </div>
+
+            <div class="dmforminput required">
+                <label for="proveedor">Proveedor</label>
+                <input 
+                    type="text" 
+                    name="proveedor" 
+                    id="proveedor" 
+                    maxlength="30"
+                    placeholder="Ej: Transportes S.A."
+                    required aria-required="true" aria-describedby="hint-proveedor error-proveedor">
+                <small id="hint-proveedor" class="input-hint">Máximo 30 caracteres</small>
+                <small class="error-message" id="error-proveedor"></small>
+            </div>
+
+
+            <div class="dmforminput required">
+                <label for="telefono">Teléfono</label>
+                <input 
+                    type="tel" 
+                    name="telefono" 
+                    id="telefono" 
+                    maxlength="10"
+                    placeholder="Ej: 3001234567"
+                    required aria-required="true" aria-describedby="hint-telefono error-telefono">
+                <small id="hint-telefono" class="input-hint">Debe contener exactamente 10 dígitos</small>
+                <small class="error-message" id="error-telefono"></small>
+            </div>
+
+            <div class="dmforminput required">
+                <label for="placa">Placa</label>
+                <input 
+                    type="text" 
+                    name="placa" 
+                    id="placa" 
+                    maxlength="6"
+                    placeholder="Ej: ABC123"
+                    style="text-transform: uppercase;"
+                    required aria-required="true" aria-describedby="hint-placa error-placa">
+                <small id="hint-placa" class="input-hint">Formato: 3 letras y 3 números (Ej: ABC123)</small>
+                <small class="error-message" id="error-placa"></small>
+            </div>
+
+            <div class="dmforminput required">
+                <label for="kilos">Kilos aproximados</label>
+                <input 
+                    type="number" 
+                    name="kilos" 
+                    id="kilos" 
+                    min="1"
+                    max="50000"
+                    placeholder="Ej: 25000"
+                    required aria-required="true" aria-describedby="hint-kilos error-kilos">
+                <small id="hint-kilos" class="input-hint">Máximo 50,000 kilos</small>
+                <small class="error-message" id="error-kilos"></small>
+            </div>
+
+            <div class="dmforminput required">
+                <label for="pacas">Pacas</label>
+                <input 
+                    type="number" 
+                    name="pacas" 
+                    id="pacas" 
+                    min="1"
+                    max="80"
+                    placeholder="Ej: 40"
+                    required aria-required="true" aria-describedby="hint-pacas error-pacas">
+                <small id="hint-pacas" class="input-hint">Máximo 80 pacas</small>
+                <small class="error-message" id="error-pacas"></small>
+            </div>
+
+            <button type="submit">Confirmar cupo</button>
+        </form>
+        <div id="mensaje-error" style="display:none; color:red; margin-top:10px;"></div>
+        <script>
+document.getElementById("formCupo").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const datos = new FormData(form);
+
+    const respuesta = await fetch("/guardar", {
+        method: "POST",
+        body: datos
+    });
+
+    // Excel abierto / sistema ocupado
+    if (respuesta.status === 503) {
+        const data = await respuesta.json();
+        mostrarError(data.mensaje);
+        return;
+    }
+
+    // Error genérico
+    if (!respuesta.ok) {
+        mostrarError("Ocurrió un error interno. Intente nuevamente.");
+        return;
+    }
+
+    // Éxito → recargar o limpiar
+    window.location.href = "/?success=1";
+});
+
+function mostrarError(mensaje) {
+    const div = document.getElementById("mensaje-error");
+    div.innerText = mensaje;
+    div.style.display = "block";
+}
+</script>
+
+    </div>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // MENSAJE DE ÉXITO DESPUÉS DE REGISTRAR CUPO
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("success") === "1") {
+    const mensaje = document.getElementById("mensaje-exito");
+    mensaje.style.display = "block";
+
+    mensaje.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Ocultar mensaje después de 5 segundos
+    setTimeout(() => {
+        mensaje.style.display = "none";
+    }, 5000);
+
+    // Limpiar URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
+
+    // Obtener el primer y último día del mes actual
+    const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+
+    const calendar = new FullCalendar.Calendar(
+        document.getElementById("calendar"),
+        {
+            initialView: "dayGridMonth",
+            locale: "es",
+
+            dateClick: function (info) {
+                const fecha = new Date(info.date);
+                fecha.setHours(0,0,0,0);
+
+                // Bloquear domingos y días pasados
+                if (fecha < hoy || fecha.getDay() === 0) return;
+                
+                // Bloquear días fuera del mes actual
+                if (fecha < primerDiaMes || fecha > ultimoDiaMes) return;
+
+                const totalCupos = (fecha.getDay() <= 5) ? 12 : 5;
+                const fechaStr = fecha.toISOString().split("T")[0];
+
+                document.getElementById("titulo").innerText =
+                    "Cupos disponibles para " + fechaStr;
+
+                fetch(`/cupos_ocupados?fecha=${fechaStr}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const cont = document.getElementById("cupos");
+                        cont.innerHTML = "";
+
+                        for (let i = 1; i <= totalCupos; i++) {
+                            const div = document.createElement("div");
+                            div.classList.add("cupo");
+
+                            if (data.ocupadas.includes(i)) {
+                                div.classList.add("ocupado");
+                                div.innerText = "Cupo " + i;
+                            } else {
+                                div.classList.add("libre");
+                                div.innerText = "Cupo " + i;
+                                div.onclick = () => mostrarFormulario(fechaStr, i);
+                            }
+                            cont.appendChild(div);
+                        }
+                    });
+            }
+        }
+    );
+
+    calendar.render();
+
+    // VALIDACIONES DEL FORMULARIO
+    const formCupo = document.getElementById("formCupo");
+    const inputTelefono = document.getElementById("telefono");
+    const inputPlaca = document.getElementById("placa");
+    const errorTelefono = document.getElementById("error-telefono");
+    const errorPlaca = document.getElementById("error-placa");
+    const inputKilos = document.getElementById("kilos");
+    const inputPacas = document.getElementById("pacas");
+    const errorKilos = document.getElementById("error-kilos");
+    const errorPacas = document.getElementById("error-pacas");
+
+    // Validación de kilos
+    inputKilos.addEventListener("input", function() {
+
+    // Eliminar cualquier caracter que no sea número
+    this.value = this.value.replace(/\D/g, '');
+
+    // Eliminar ceros al inicio
+    this.value = this.value.replace(/^0+/, '');
+    
+    errorKilos.textContent = "";
+    this.classList.remove("input-error");
+
+    if (this.value === "") return;
+    
+    const valor = parseInt(this.value);
+
+    if (valor < 1) {
+        this.value = "";
+        errorKilos.textContent = "Debe ingresar al menos 1 kilo";
+        this.classList.add("input-error");
+        return;
+    }
+
+    if (valor > 50000) {
+        this.value = 50000;
+        errorKilos.textContent = "El máximo permitido es 50,000 kilos";
+        this.classList.add("input-error");
+    }
+});
+
+
+    // Validación de pacas
+    inputPacas.addEventListener("input", function() {
+
+    // Eliminar cualquier caracter que no sea número
+    this.value = this.value.replace(/\D/g, '');
+
+    // Eliminar ceros al inicio
+    this.value = this.value.replace(/^0+/, '');
+    
+    errorPacas.textContent = "";
+    this.classList.remove("input-error");
+
+    if (this.value === "") return;
+    
+    const valor = parseInt(this.value);
+
+    if (valor < 1) {
+        this.value = "";
+        errorPacas.textContent = "Debe ingresar al menos 1 paca";
+        this.classList.add("input-error");
+        return;
+    }
+
+    if (valor > 80) {
+        this.value = 80;
+        errorPacas.textContent = "El máximo permitido es 80 pacas";
+        this.classList.add("input-error");
+    }
+});
+
+    // Validación de teléfono - solo números
+    inputTelefono.addEventListener("input", function(e) {
+        // Eliminar cualquier caracter que no sea número
+        this.value = this.value.replace(/\D/g, '');
+        
+        errorTelefono.textContent = "";
+        this.classList.remove("input-error");
+        
+        if (this.value.length > 0 && this.value.length !== 10) {
+            errorTelefono.textContent = "El teléfono debe tener exactamente 10 dígitos";
+            this.classList.add("input-error");
+        }
+    });
+
+    // Validación de placa - 3 letras y 3 números
+    inputPlaca.addEventListener("input", function(e) {
+        // Convertir a mayúsculas automáticamente
+        this.value = this.value.toUpperCase();
+        
+        // Eliminar cualquier caracter que no sea letra o número
+        this.value = this.value.replace(/[^A-Z0-9]/g, '');
+        
+        errorPlaca.textContent = "";
+        this.classList.remove("input-error");
+        
+        if (this.value.length === 6) {
+            const regex = /^[A-Z]{3}[0-9]{3}$/;
+            if (!regex.test(this.value)) {
+                errorPlaca.textContent = "Formato inválido. Use 3 letras seguidas de 3 números";
+                this.classList.add("input-error");
+            }
+        }
+    });
+
+
+    // Validación al enviar el formulario
+    formCupo.addEventListener("submit", function(e) {
+        let isValid = true;
+
+        // Validar teléfono
+        const telefono = inputTelefono.value;
+        if (telefono.length !== 10 || !/^\d{10}$/.test(telefono)) {
+            e.preventDefault();
+            errorTelefono.textContent = "El teléfono debe contener exactamente 10 dígitos";
+            inputTelefono.classList.add("input-error");
+            inputTelefono.focus();
+            isValid = false;
+        }
+
+        // Validar placa
+        const placa = inputPlaca.value;
+        const regexPlaca = /^[A-Z]{3}[0-9]{3}$/;
+        if (!regexPlaca.test(placa)) {
+            e.preventDefault();
+            errorPlaca.textContent = "La placa debe tener 3 letras seguidas de 3 números (Ej: ABC123)";
+            inputPlaca.classList.add("input-error");
+            if (isValid) inputPlaca.focus();
+            isValid = false;
+        }
+
+        // Validar kilos
+    const kilos = parseInt(inputKilos.value);
+    if (isNaN(kilos) || kilos < 1 || kilos > 50000) {
+        e.preventDefault();
+        errorKilos.textContent = "Ingrese un valor entre 1 y 50,000 kilos";
+        inputKilos.classList.add("input-error");
+        if (isValid) inputKilos.focus();
+        isValid = false;
+    }
+    
+    // Validar pacas
+    const pacas = parseInt(inputPacas.value);
+    if (isNaN(pacas) || pacas < 1 || pacas > 80) {
+        e.preventDefault();
+        errorPacas.textContent = "Ingrese un valor entre 1 y 80 pacas";
+        inputPacas.classList.add("input-error");
+        if (isValid) inputPacas.focus();
+        isValid = false;
+    }
+
+        if (!isValid) {
+            // Scroll al primer campo con error
+            const firstError = document.querySelector(".input-error");
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+    });
+});
+
+function mostrarFormulario(fecha, cupo) {
+    const form = document.getElementById("formulario");
+
+    form.style.display = "block";
+    document.getElementById("fecha_txt").innerText = fecha;
+    document.getElementById("cupo_txt").innerText = cupo;
+    document.getElementById("fecha").value = fecha;
+    document.getElementById("cupo").value = cupo;
+
+    // Limpiar errores previos
+    document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
+    document.querySelectorAll(".input-error").forEach(el => el.classList.remove("input-error"));
+
+    form.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+</script>
+
+<footer class="site-footer" role="contentinfo" aria-label="Contacto">
+    <div class="footer-inner">
+        <h3>Contacto</h3>
+        <div class="accent-line" aria-hidden="true"></div>
+        <p class="footer-subtitle">Servicio al cliente</p>
+
+        <div class="contact-info">
+            <p>Telefono: <strong> +57 313 8893206</strong></p>
+            <p>PBX: <strong>6383000 - 6383010</strong></p>
+
+            <p class="emails">
+                <a href="mailto:clientes@corrugadosandina.com.co">mprimas@corrugadosandina.com.co</a><br>
+            </p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,739 @@
+/* =========================
+   VARIABLES GLOBALES
+========================= */
+:root {
+    --primary: #6bbf2d;
+    --secondary: #c7b404;
+    --primary-hover: #5aa524;
+    --bg: #ffffff;
+    --card: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #4b5563;
+    --border: #d1d5db;
+}
+
+/* =========================
+   RESET / BASE
+========================= */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background-color: #f5f5f3;
+    color: var(--text-main);
+    margin: 0;
+    padding: 16px;
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER CON LOGO
+========================= */
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Hero header personalizado */
+.header.hero {
+    position: relative;
+    padding: 28px 18px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(240,249,232,0.85) 100%);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+.hero-subtitle {
+    margin-top: 6px;
+    margin-bottom: 14px;
+    color: var(--text-muted);
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: var(--primary);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: 6px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cta-button:hover,
+.cta-button:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(27, 69, 13, 0.12);
+}
+
+/* =========================
+   BOTÓN SALIR
+========================= */
+.btn-salir {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-salir::before {
+    content: "→";
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.btn-salir:hover {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+    color: #dc2626;
+}
+
+.btn-salir:hover::before {
+    transform: translateX(3px);
+}
+
+.btn-salir:focus-visible {
+    outline: 3px solid rgba(220, 38, 38, 0.2);
+    outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+    .btn-salir {
+        top: 12px;
+        right: 12px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Enlace para saltar al contenido, sólo visible al enfocar */
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.skip-link:focus,
+.sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #111827;
+    color: #fff;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.logo {
+    max-width: 180px;
+    height: auto;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+    .logo {
+        max-width: 220px;
+    }
+}
+
+h1 {
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: -0.5px;
+} 
+
+h1 span.primary {
+    color: var(--secondary);
+}
+
+h1 span.secondary {
+    color: var(--primary);
+}
+
+h2, h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: clamp(1rem, 3vw, 1.25rem);
+}
+
+p {
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* =========================
+   LAYOUT PRINCIPAL
+========================= */
+.contenedor {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+    .contenedor {
+        grid-template-columns: 1.2fr 1fr;
+        gap: 30px;
+    }
+}
+
+/* =========================
+   TARJETAS
+========================= */
+.card {
+    background-color: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 16px;
+}
+
+@media (min-width: 768px) {
+    .card {
+        padding: 24px;
+    }
+}
+
+/* =========================
+   CALENDARIO - COLORES EMPRESA
+========================= */
+#calendar {
+    width: 100%;
+}
+
+/* Ocultar botón "today" */
+.fc-today-button {
+    display: none !important;
+}
+
+/* Encabezado del calendario */
+.fc-toolbar-title {
+    font-size: clamp(1rem, 3vw, 1.35rem);
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* Botones de navegación */
+.fc .fc-button-primary {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+.fc .fc-button-primary:disabled {
+    background-color: #9ca3af !important;
+    border-color: #9ca3af !important;
+}
+
+/* Encabezados de días */
+.fc .fc-col-header-cell {
+    background-color: var(--secondary);
+    color: rgb(0, 0, 0);
+    font-weight: 600;
+    padding: 12px 4px;
+    border-color: #b5a004 !important;
+}
+
+/* Día actual */
+.fc .fc-day-today {
+    background-color: #f0f9e8 !important;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+/* Días pasados */
+.fc .fc-daygrid-day.fc-day-past {
+    background-color: #e5e7eb !important;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Semana actual */
+.fc-day.semana-actual {
+    background-color: #f0f9e8 !important;
+}
+
+/* Hover en días */
+.fc-day:not(.fc-day-past):hover {
+    background-color: #e8f5d8 !important;
+    cursor: pointer;
+}
+
+/* Domingos */
+.fc .fc-day-sun {
+    background-color: #fef2f2 !important;
+}
+
+.fc {
+    font-size: 0.8rem;
+}
+
+.fc-toolbar {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1.5em;
+}
+
+@media (min-width: 768px) {
+    .fc {
+        font-size: 0.9rem;
+    }
+    
+    .fc-toolbar {
+        flex-direction: row;
+    }
+}
+
+/* =========================
+   CUPOS
+========================= */
+#cupos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+    #cupos {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+}
+
+@media (min-width: 768px) {
+    #cupos {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+    }
+}
+
+.cupo {
+    padding: 14px 12px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.cupo.libre {
+    background-color: var(--primary);
+}
+
+.cupo.libre:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    background-color: var(--primary-hover);
+}
+
+.cupo.ocupado {
+    background-color: #9ca3af;
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+/* =========================
+   FORMULARIO MEJORADO
+========================= */
+#formulario {
+    display: none;
+}
+
+.dmforminput {
+    margin-bottom: 20px;
+}
+
+.dmforminput.required label::after {
+    content: " *";
+    color: #dc2626;
+    font-weight: 600;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+    color: var(--text-main);
+    display: block;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+select {
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: all 0.2s ease;
+    background-color: white;
+    font-family: inherit;
+}
+
+select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234b5563' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+select:disabled {
+    background-color: #f9fafb;
+    cursor: not-allowed;
+}
+
+input:hover,
+select:hover {
+    border-color: #9ca3af;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(107, 191, 45, 0.1);
+}
+
+/* Mejora de foco visible para accesibilidad (teclado) */
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+.cta-button:focus-visible {
+    outline: 3px solid rgba(99, 102, 241, 0.15);
+    outline-offset: 2px;
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+button[type="submit"],
+.dmformsubmit input[type="submit"] {
+    background-color: #1f2937;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+button[type="submit"]:hover,
+.dmformsubmit input[type="submit"]:hover {
+    background-color: #111827;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+button[type="submit"]:active,
+.dmformsubmit input[type="submit"]:active {
+    transform: translateY(1px);
+}
+
+/* =========================
+   INFO CUPO
+========================= */
+.info {
+    background: linear-gradient(135deg, #f0f9e8 0%, #e8f5d8 100%);
+    border-left: 4px solid var(--primary);
+    padding: 16px 18px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.info p {
+    margin: 8px 0;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.info p strong {
+    color: var(--text-main);
+    font-weight: 600;
+    display: inline-block;
+    min-width: 70px;
+}
+
+.info p span {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .info {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+    }
+
+    button[type="submit"],
+    .dmformsubmit input[type="submit"] {
+        padding: 13px;
+        font-size: 0.95rem;
+    }
+    
+    input,
+    select {
+        padding: 11px 12px;
+        font-size: 0.9rem;
+    }
+
+    label {
+        font-size: 0.85rem;
+    }
+
+    .dmforminput {
+        margin-bottom: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .contenedor {
+        gap: 40px;
+    }
+    
+    .card {
+        padding: 28px;
+    }
+    
+    .info {
+        padding: 18px 20px;
+    }
+}
+
+/* =========================
+   REGLAS E INSTRUCCIONES
+========================= */
+.card.reglas {
+    background: linear-gradient(135deg, #f0f9e8 0%, #fffbf0 100%);
+    border: 1px solid #d4d4d4;
+    grid-column: 1 / -1;
+}
+
+.card.reglas h2 {
+    color: var(--text-main);
+    font-size: clamp(1.1rem, 3vw, 1.3rem);
+    margin-top: 0;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.card.reglas ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card.reglas li {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    line-height: 1.6;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.card.reglas li:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card.reglas li::before {
+    content: "✓";
+    color: var(--primary);
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+/* =========================
+   VALIDACIONES DE FORMULARIO
+========================= */
+.input-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+.error-message {
+    display: block;
+    font-size: 0.8rem;
+    color: #dc2626;
+    margin-top: 4px;
+    font-weight: 500;
+    min-height: 18px;
+}
+
+.input-error {
+    border-color: #dc2626 !important;
+    background-color: #fef2f2;
+}
+
+.input-error:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+input[type="tel"]::placeholder,
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+/* Ocultar icono nativo de "mostrar contraseña" en distintos navegadores */
+input[type="password"] {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+.mensaje-exito {
+    max-width: 1200px;
+    margin: 15px auto;
+    padding: 14px 18px;
+    background-color: #ecfdf5;
+    border-left: 5px solid #10b981;
+    color: #065f46;
+    font-weight: 600;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   FOOTER - CONTACTO
+========================= */
+.site-footer {
+    background-color: #111213;
+    color: #ffffff;
+    padding: 28px 18px;
+    margin-top: 36px;
+    border-radius: 8px;
+}
+
+.site-footer .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.site-footer h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.25rem;
+    color: #fff;
+    text-align: left;
+}
+
+.site-footer .accent-line {
+    width: 110px;
+    height: 2px;
+    background: var(--primary);
+    margin: 10px 0 14px 0;
+}
+
+.site-footer .footer-subtitle {
+    color: #e6e6e6;
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 12px;
+}
+
+.site-footer .contact-info p {
+    margin: 6px 0;
+    color: #d1d5db;
+    text-align: left;
+}
+
+.site-footer .emails a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+@media (max-width: 480px) {
+    .site-footer {
+        padding: 18px 12px;
+    }
+}

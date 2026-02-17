@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Conductor | SGF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario.css') }}">
+</head>
+<body>
+
+<div class="registro-wrapper">
+    <!-- Header opcional con logo -->
+    <div class="registro-header">
+        <!-- Descomenta si tienes logo -->
+        <!-- <img src="ruta/a/logo.png" alt="SGF Logo" class="logo"> -->
+        <h1>
+            <span class="primary">Sistema de</span>
+            <span class="secondary">Gestión de Fichos</span>
+        </h1>
+    </div>
+
+    <div class="registro-card">
+        <h2 class="form-title">Registro de Conductor</h2>
+        <p class="form-subtitle">Completa el formulario para crear tu cuenta</p>
+
+        <!-- Mensajes de éxito/error (Flask flash messages) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ 'success-banner' if category == 'success' else 'error-banner' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div id="mensaje-error" style="display:none; color:red; margin-top:10px;"></div>
+
+        <form method="POST" action="{{ url_for('registro') }}" id="registroForm" novalidate>
+            <!-- Nombre del conductor -->
+            <div class="dmforminput required">
+                <label for="nombre">Nombre del conductor</label>
+                <input 
+                    type="text" 
+                    id="nombre" 
+                    name="nombre" 
+                    maxlength="30" 
+                    required
+                    placeholder="Ej: Fernando Hernandez"
+                    autocomplete="name"
+                    aria-describedby="nombre-error">
+                <span class="error-message" id="nombre-error"></span>
+            </div>
+
+            <!-- Placa del vehículo -->
+            <!-- (Campo placa eliminado; ahora se usa teléfono como identificador) -->
+
+            <!-- Teléfono -->
+            <div class="dmforminput required">
+                <label for="telefono">Teléfono</label>
+                <input 
+                    type="tel" 
+                    id="telefono" 
+                    name="telefono" 
+                    maxlength="10" 
+                    required
+                    placeholder="3001234567"
+                    pattern="[0-9]{10}"
+                    autocomplete="tel"
+                    aria-describedby="telefono-hint telefono-error">
+                <span class="input-hint" id="telefono-hint">10 dígitos sin espacios ni guiones</span>
+                <span class="error-message" id="telefono-error"></span>
+            </div>
+
+            <!-- Proveedor -->
+            <div class="dmforminput required">
+                <label for="proveedor">Proveedor</label>
+                <input 
+                    type="text" 
+                    id="proveedor" 
+                    name="proveedor" 
+                    maxlength="30" 
+                    required
+                    placeholder="Ej: Transportes XYZ"
+                    autocomplete="organization"
+                    aria-describedby="proveedor-error">
+                <span class="error-message" id="proveedor-error"></span>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="dmforminput required password-toggle">
+                <label for="password">Contraseña</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    minlength="6"
+                    required
+                    placeholder="Mínimo 6 caracteres"
+                    autocomplete="new-password"
+                    aria-describedby="password-hint password-error">
+                <button 
+                    type="button" 
+                    class="toggle-password-btn" 
+                    onclick="togglePassword()"
+                    aria-label="Mostrar u ocultar contraseña">
+                    Mostrar
+                </button>
+                <span class="input-hint" id="password-hint">Mínimo 6 caracteres</span>
+                <span class="error-message" id="password-error"></span>
+            </div>
+
+            <!-- Botón de envío -->
+            <div class="dmformsubmit">
+                <button type="submit">Registrarse</button>
+            </div>
+        </form>
+
+        <!-- Link para iniciar sesión -->
+        <div class="login-link">
+            ¿Ya tienes cuenta?
+            <a href="{{ url_for('login') }}">Iniciar sesión</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle mostrar/ocultar contraseña
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleBtn = document.querySelector('.toggle-password-btn');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleBtn.textContent = 'Ocultar';
+        } else {
+            passwordInput.type = 'password';
+            toggleBtn.textContent = 'Mostrar';
+        }
+    }
+
+    // Validación en tiempo real
+    const form = document.getElementById('registroForm');
+    const inputs = form.querySelectorAll('input[required]');
+
+    // Validar campo individual
+    function validateField(field) {
+        const errorSpan = document.getElementById(`${field.id}-error`);
+        let errorMessage = '';
+
+        // Limpiar error previo
+        field.classList.remove('input-error');
+        if (errorSpan) errorSpan.textContent = '';
+
+        // Validaciones específicas
+        if (!field.value.trim()) {
+            errorMessage = 'Este campo es obligatorio';
+        } else if (field.id === 'telefono') {
+            const telefonoPattern = /^[0-9]{10}$/;
+            if (!telefonoPattern.test(field.value)) {
+                errorMessage = 'Debe contener exactamente 10 dígitos';
+            }
+        } else if (field.id === 'password') {
+            if (field.value.length < 6) {
+                errorMessage = 'La contraseña debe tener al menos 6 caracteres';
+            }
+        } else if (field.id === 'nombre' || field.id === 'proveedor') {
+            if (field.value.trim().length < 3) {
+                errorMessage = 'Debe contener al menos 3 caracteres';
+            }
+        }
+
+        // Mostrar error si existe
+        if (errorMessage) {
+            field.classList.add('input-error');
+            if (errorSpan) errorSpan.textContent = errorMessage;
+            return false;
+        }
+
+        return true;
+    }
+
+    // Agregar listeners a cada input
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+
+        // Limpiar error al escribir
+        input.addEventListener('input', function() {
+            if (this.classList.contains('input-error')) {
+                validateField(this);
+            }
+        });
+    });
+
+    // No hay campo placa: el identificador es el teléfono
+
+    // Solo números en teléfono
+    document.getElementById('telefono').addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    // Validación al enviar formulario
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (!validateField(input)) {
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            // Scroll al primer error
+            const firstError = form.querySelector('.input-error');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+            return;
+        }
+
+        // Si la validación es correcta, enviar con AJAX
+        const formData = new FormData(form);
+        
+        try {
+            const respuesta = await fetch("{{ url_for('registro') }}", {
+                method: "POST",
+                body: formData
+            });
+
+            // Archivo bloqueado / sistema ocupado
+            if (respuesta.status === 503) {
+                const data = await respuesta.json();
+                mostrarError(data.mensaje);
+                return;
+            }
+
+            // Error genérico
+            if (!respuesta.ok) {
+                mostrarError("Ocurrió un error al registrarse. Intente nuevamente.");
+                return;
+            }
+
+            // Éxito → redirigir
+            window.location.href = "{{ url_for('sistema') }}";
+        } catch (error) {
+            mostrarError("Error de conexión. Intente más tarde.");
+        }
+    });
+
+    function mostrarError(mensaje) {
+        const div = document.getElementById("mensaje-error");
+        div.innerText = mensaje;
+        div.style.display = "block";
+        div.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+</script>
+
+</body>
+</html>
