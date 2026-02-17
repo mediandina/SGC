@@ -114,6 +114,38 @@ def formatear_excel():
 
     wb.save(EXCEL_FILE)
 
+def formatear_excel_usuarios():
+    wb = load_workbook(USUARIOS_FILE)
+    ws = wb.active
+
+    borde_fino = Border(
+        left=Side(style="thin"),
+        right=Side(style="thin"),
+        top=Side(style="thin"),
+        bottom=Side(style="thin")
+    )
+
+    # Encabezados
+    for col in range(1, ws.max_column + 1):
+        celda = ws.cell(row=1, column=col)
+        celda.font = Font(bold=True)
+        celda.alignment = Alignment(horizontal="center", vertical="center")
+        celda.border = borde_fino
+        ws.column_dimensions[celda.column_letter].width = 22
+
+    # Datos
+    for row in range(2, ws.max_row + 1):
+        for col in range(1, ws.max_column + 1):
+            celda = ws.cell(row=row, column=col)
+            celda.border = borde_fino
+            celda.alignment = Alignment(horizontal="center", vertical="center")
+
+            # Teléfono como texto (columna B)
+            if col == 2 or celda.column_letter == "B":
+                celda.number_format = "@"
+
+    wb.save(USUARIOS_FILE)
+
 
 # ---------- Registro ----------
 @app.route("/registro", methods=["GET", "POST"])
@@ -149,6 +181,7 @@ def registro():
 
             df = pd.concat([df, pd.DataFrame([nuevo])], ignore_index=True)
             df.to_excel(USUARIOS_FILE, index=False)
+            formatear_excel_usuarios()
 
             # Guardar teléfono normalizado en sesión
             session["usuario"] = telefono
