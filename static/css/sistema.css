@@ -414,6 +414,7 @@ input[type="text"],
 input[type="password"],
 input[type="number"],
 input[type="tel"],
+input[type="email"],
 select {
     padding: 12px 14px;
     border: 1.5px solid var(--border);

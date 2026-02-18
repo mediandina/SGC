@@ -31,7 +31,7 @@
 </header>
 
 <div id="mensaje-exito" class="mensaje-exito" style="display:none;" role="status" aria-live="polite">
-    Cupo registrado con éxito
+    <span id="mensaje-exito-texto"></span>
 </div>
 
 <main class="contenedor" role="main">
@@ -83,7 +83,7 @@
                 <label for="tipo">Tipo de vehículo</label>
                 <select name="tipo" id="tipo" required>
                     <option value="" disabled selected hidden>Seleccione una opción</option>
-                    <option value="Mula">Mula</option>
+                    <option value="Mula">Tractocamión</option>
                     <option value="Planchón">Planchón</option>
                     <option value="Sencillo">Sencillo</option>
                 </select>
@@ -114,6 +114,19 @@
                     required aria-required="true" aria-describedby="hint-telefono error-telefono">
                 <small id="hint-telefono" class="input-hint">Debe contener exactamente 10 dígitos</small>
                 <small class="error-message" id="error-telefono"></small>
+            </div>
+
+            <div class="dmforminput required">
+                <label for="email">Correo electrónico</label>
+                <input 
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    maxlength="50"
+                    placeholder="Ej: tunombre@email.com"
+                    required aria-required="true" aria-describedby="hint-email error-email">
+                <small id="hint-email" class="input-hint">Ingrese un correo electrónico válido</small>
+                <small class="error-message" id="error-email"></small>
             </div>
 
             <div class="dmforminput required">
@@ -187,7 +200,8 @@ document.getElementById("formCupo").addEventListener("submit", async function (e
     }
 
     // Éxito → recargar o limpiar
-    window.location.href = "/?success=1";
+    // Éxito → recargar o limpiar
+    window.location.href = `/?success=1&cupo=${datos.get('cupo')}&fecha=${datos.get('fecha')}`;
 });
 
 function mostrarError(mensaje) {
@@ -208,20 +222,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const params = new URLSearchParams(window.location.search);
 
     if (params.get("success") === "1") {
+    const cupo = params.get("cupo") || "";
+    const fecha = params.get("fecha") || "";
+    
     const mensaje = document.getElementById("mensaje-exito");
+    const textoMensaje = document.getElementById("mensaje-exito-texto");
+    
+    textoMensaje.innerHTML = `Apartaste el cupo <strong>${cupo}</strong> para el día <strong>${fecha}</strong>. Por favor quedar pendiente al correo electrónico.`;
+    
     mensaje.style.display = "block";
 
     mensaje.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Ocultar mensaje después de 5 segundos
-    setTimeout(() => {
-        mensaje.style.display = "none";
-    }, 5000);
-
     // Limpiar URL
     window.history.replaceState({}, document.title, window.location.pathname);
     }
-
 
     const hoy = new Date();
     hoy.setHours(0,0,0,0);
@@ -235,6 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             initialView: "dayGridMonth",
             locale: "es",
+            headerToolbar: { left: "", center: "title", right: "" },
 
             dateClick: function (info) {
                 const fecha = new Date(info.date);
@@ -429,6 +445,18 @@ document.addEventListener("DOMContentLoaded", function () {
         inputPacas.classList.add("input-error");
         if (isValid) inputPacas.focus();
         isValid = false;
+    }
+
+    if (params.get("success") === "1") {
+    const cupo = params.get("cupo") || "";
+    const fecha = params.get("fecha") || "";
+    
+    const mensaje = document.getElementById("mensaje-exito");
+    const textoMensaje = document.getElementById("mensaje-exito-texto");
+    
+    textoMensaje.innerHTML = `Apartaste el cupo <strong>${cupo}</strong> para el día <strong>${fecha}</strong>. Por favor quedar pendiente al correo electrónico.`;
+    
+    mensaje.style.display = "block";
     }
 
         if (!isValid) {

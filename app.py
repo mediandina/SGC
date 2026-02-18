@@ -25,6 +25,7 @@ COLUMNAS = [
     "Cupo",
     "Proveedor",
     "Telefono",
+    "Correo",
     "Placa",
     "Kilos aproximados",
     "Pacas"
@@ -325,6 +326,7 @@ def guardar_cupo():
             "Cupo": cupo,
             "Proveedor": request.form.get("proveedor"),
             "Telefono": str(request.form.get("telefono")),
+            "Correo": request.form.get("email"),
             "Placa": session.get("usuario"),
             "Kilos aproximados": int(request.form.get("kilos")),
             "Pacas": int(request.form.get("pacas"))
