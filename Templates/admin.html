@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración | SGC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+
+<a class="skip-link sr-only" href="#tabla-cupos">Saltar al contenido</a>
+
+<header class="header hero admin-header" role="banner">
+    <a href="{{ url_for('logout') }}" class="btn-salir" aria-label="Cerrar sesión">Salir</a>
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Descargue Andina" class="logo">
+    <h1>
+        <span class="primary">Panel de</span>
+        <span class="secondary">Administración</span>
+    </h1>
+    <p class="hero-subtitle">Consulta y descarga los cupos registrados en el sistema.</p>
+    <a href="{{ url_for('download_cupos') }}" class="cta-button admin-download-btn" role="button">
+        ⬇ Descargar Excel
+    </a>
+</header>
+
+<main class="contenedor admin-main" role="main">
+
+    <!-- RESUMEN RÁPIDO -->
+    {% if filas %}
+    <div class="admin-stats">
+        <div class="stat-card">
+            <span class="stat-number">{{ filas | length }}</span>
+            <span class="stat-label">Cupos registrados</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">
+                {{ filas | map(attribute='Fecha') | list | unique | list | length }}
+            </span>
+            <span class="stat-label">Días con cupos</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TABLA -->
+    <div class="card admin-card" id="tabla-cupos">
+        <div class="admin-card-header">
+            <h2>Cupos registrados</h2>
+            {% if filas %}
+            <span class="badge-total">{{ filas | length }} registros</span>
+            {% endif %}
+        </div>
+
+        {% if filas and columnas %}
+        <div class="table-wrapper" role="region" aria-label="Tabla de cupos registrados" tabindex="0">
+            <table class="admin-table" aria-label="Cupos">
+                <thead>
+                    <tr>
+                        {% for c in columnas %}
+                        {% if c != 'Placa' %}
+                        <th scope="col">{{ c }}</th>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in filas %}
+                    <tr>
+                        {% for c in columnas %}
+                        {% if c != 'Placa' %}
+                        <td data-label="{{ c }}">{{ row[c] }}</td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="admin-empty">
+            <div class="empty-icon">📋</div>
+            <p>No hay cupos registrados aún.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</main>
+
+<footer class="site-footer" role="contentinfo" aria-label="Contacto">
+    <div class="footer-inner">
+        <h3>Contacto</h3>
+        <div class="accent-line" aria-hidden="true"></div>
+        <p class="footer-subtitle">Servicio al cliente</p>
+        <div class="contact-info">
+            <p>Teléfono: <strong>+57 313 8893206</strong></p>
+            <p class="emails">
+                <a href="mailto:mprimas@corrugadosandina.com.co">mprimas@corrugadosandina.com.co</a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

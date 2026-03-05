@@ -1,0 +1,305 @@
+/* =========================
+   ADMIN.CSS
+   Extiende sistema.css con
+   estilos específicos del panel
+   de administración.
+========================= */
+
+/* =========================
+   HEADER ADMIN
+========================= */
+.admin-header {
+    margin-bottom: 24px;
+}
+
+.admin-download-btn {
+    background-color: var(--primary);
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-download-btn:hover,
+.admin-download-btn:focus {
+    background-color: var(--primary-hover);
+    box-shadow: 0 6px 18px rgba(27, 69, 13, 0.18);
+}
+
+/* =========================
+   STATS RÁPIDAS
+========================= */
+.admin-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+}
+
+.stat-card {
+    flex: 1;
+    min-width: 130px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-top: 4px solid var(--primary);
+}
+
+.stat-number {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-align: center;
+}
+
+/* =========================
+   LAYOUT ADMIN MAIN
+========================= */
+.admin-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+/* =========================
+   CARD DE TABLA
+========================= */
+.admin-card {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.admin-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-card-header h2 {
+    margin: 0;
+    text-align: left;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--text-main);
+}
+
+.badge-total {
+    background-color: #f0f9e8;
+    color: var(--primary);
+    border: 1px solid #c3e8a0;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* =========================
+   TABLA
+========================= */
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Barra de scroll personalizada */
+.table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    min-width: 700px;
+}
+
+.admin-table thead tr {
+    background: linear-gradient(135deg, var(--secondary) 0%, #d4bc04 100%);
+}
+
+.admin-table thead th {
+    padding: 13px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #1a1a00;
+    white-space: nowrap;
+    border-right: 1px solid rgba(0,0,0,0.08);
+}
+
+.admin-table thead th:last-child {
+    border-right: none;
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.15s ease;
+}
+
+.admin-table tbody tr:hover {
+    background-color: #f0f9e8;
+}
+
+.admin-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.admin-table tbody td {
+    padding: 12px 16px;
+    color: var(--text-main);
+    vertical-align: middle;
+    border-right: 1px solid #f5f5f5;
+}
+
+.admin-table tbody td:last-child {
+    border-right: none;
+}
+
+/* Zebra suave */
+.admin-table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.admin-table tbody tr:nth-child(even):hover {
+    background-color: #f0f9e8;
+}
+
+/* Primera columna (Fecha) destacada */
+.admin-table tbody td:first-child {
+    font-weight: 600;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+/* =========================
+   ESTADO VACÍO
+========================= */
+.admin-empty {
+    padding: 60px 24px;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.admin-empty p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* =========================
+   RESPONSIVE — tabla en cards
+   para móvil muy pequeño
+========================= */
+@media (max-width: 600px) {
+    .admin-card-header {
+        padding: 14px 16px 12px;
+    }
+
+    .admin-table {
+        min-width: unset;
+    }
+
+    .admin-table thead {
+        display: none;
+    }
+
+    .admin-table tbody tr {
+        display: block;
+        margin-bottom: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .admin-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 10px 14px;
+        border-right: none;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.85rem;
+    }
+
+    .admin-table tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .admin-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        min-width: 120px;
+        margin-right: 10px;
+        padding-top: 1px;
+    }
+
+    .admin-table tbody td:first-child {
+        background-color: #f0f9e8;
+    }
+
+    .admin-stats {
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 14px 16px;
+    }
+}
+
+@media (min-width: 768px) {
+    .admin-main {
+        gap: 24px;
+    }
+
+    .admin-stats {
+        flex-direction: row;
+    }
+
+    .stat-card {
+        max-width: 200px;
+    }
+}
