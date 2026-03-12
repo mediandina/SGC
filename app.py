@@ -131,6 +131,53 @@ def generar_excel():
 
 
 # =======================================================
+# GENERAR EXCEL USUARIOS
+# =======================================================
+def generar_excel_usuarios():
+    """Consulta la BD y devuelve un BytesIO con el Excel de usuarios formateado."""
+    with get_db() as conn:
+        rows = conn.execute("""
+            SELECT nombre, telefono, proveedor, creado_en
+            FROM usuarios
+            ORDER BY creado_en DESC
+        """).fetchall()
+
+    columnas = ["Nombre", "Telefono", "Proveedor", "Fecha de registro"]
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Usuarios"
+
+    borde = Border(
+        left=Side(style="thin"), right=Side(style="thin"),
+        top=Side(style="thin"),  bottom=Side(style="thin")
+    )
+    fill_header = PatternFill("solid", fgColor="C7B404")
+
+    for col_idx, nombre_col in enumerate(columnas, 1):
+        c = ws.cell(row=1, column=col_idx, value=nombre_col)
+        c.font      = Font(bold=True)
+        c.alignment = Alignment(horizontal="center", vertical="center")
+        c.border    = borde
+        c.fill      = fill_header
+        ws.column_dimensions[c.column_letter].width = 22
+
+    for row_idx, row in enumerate(rows, 2):
+        valores = [row["nombre"], row["telefono"], row["proveedor"], row["creado_en"]]
+        for col_idx, valor in enumerate(valores, 1):
+            c = ws.cell(row=row_idx, column=col_idx, value=valor)
+            c.border    = borde
+            c.alignment = Alignment(horizontal="center", vertical="center")
+            if col_idx == 2:          # Telefono como texto
+                c.number_format = "@"
+
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
+
+
+# =======================================================
 # CORREO DE CONFIRMACIÓN
 # =======================================================
 def enviar_correo_confirmacion(destinatario, nombre, fecha, cupo):
@@ -401,6 +448,39 @@ def download_cupos():
     except Exception as e:
         print("ERROR download_cupos:", e)
         return render_template("error.html", mensaje="No se pudo generar el Excel"), 500
+
+
+@app.route("/download_usuarios")
+def download_usuarios():
+    if "usuario" not in session or not session.get("is_admin"):
+        return redirect(url_for("login"))
+    try:
+        excel         = generar_excel_usuarios()
+        nombre_archivo = f"usuarios_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        return send_file(
+            excel,
+            as_attachment=True,
+            download_name=nombre_archivo,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    except Exception as e:
+        print("ERROR download_usuarios:", e)
+        return render_template("error.html", mensaje="No se pudo generar el Excel"), 500
+
+
+@app.route("/limpiar_cupos", methods=["POST"])
+def limpiar_cupos():
+    if "usuario" not in session or not session.get("is_admin"):
+        return jsonify({"success": False, "mensaje": "Acceso denegado"}), 403
+    try:
+        with get_db() as conn:
+            conn.execute("DELETE FROM cupos")
+            conn.commit()
+        print("Base de datos de cupos limpiada por el administrador")
+        return jsonify({"success": True, "mensaje": "Datos eliminados correctamente"}), 200
+    except Exception as e:
+        print("ERROR limpiar_cupos:", e)
+        return jsonify({"success": False, "mensaje": "Error al limpiar los datos"}), 500
 
 
 @app.route("/cupos_ocupados")

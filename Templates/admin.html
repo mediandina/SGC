@@ -19,9 +19,17 @@
         <span class="secondary">Administración</span>
     </h1>
     <p class="hero-subtitle">Consulta y descarga los cupos registrados en el sistema.</p>
-    <a href="{{ url_for('download_cupos') }}" class="cta-button admin-download-btn" role="button">
-        ⬇ Descargar Excel
-    </a>
+    <div class="admin-buttons-group">
+        <a href="{{ url_for('download_cupos') }}" class="cta-button admin-download-btn" role="button">
+            ⬇ Descargar Cupos
+        </a>
+        <a href="{{ url_for('download_usuarios') }}" class="cta-button admin-download-btn" role="button">
+            ⬇ Descargar Usuarios
+        </a>
+        <button id="btn-limpiar" class="cta-button admin-delete-btn" type="button">
+            Limpiar datos de cupos
+        </button>
+    </div>
 </header>
 
 <main class="contenedor admin-main" role="main">
@@ -99,6 +107,34 @@
         </div>
     </div>
 </footer>
+
+<script>
+    document.getElementById('btn-limpiar').addEventListener('click', function() {
+        if (confirm('⚠️ ADVERTENCIA\n\n¿Está seguro de que desea eliminar TODOS los datos de cupos registrados?\n\nEsta acción NO se puede deshacer.')) {
+            if (confirm('Por favor, confirme nuevamente que desea continuar.\n\nEsta es la última confirmación.')) {
+                fetch('{{ url_for("limpiar_cupos") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✓ Datos eliminados correctamente.\n\nLa página se recargará.');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.mensaje);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al procesar la solicitud');
+                });
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
